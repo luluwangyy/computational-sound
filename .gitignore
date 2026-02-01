@@ -1,11 +1,11 @@
-# Ignore the specific 'basic' folder inside week1
+ 
 lab1/basic/
 
-# Ignore system files (Mac)
+
 .DS_Store
 
-# Ignore VS Code settings (optional, but good practice)
+
 .vscode/
 
-# Ignore node_modules (if you ever use npm later)
+
 node_modules/
