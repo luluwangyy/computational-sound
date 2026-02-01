@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Piano</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: #1a252f;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;       
+            flex-direction: column; 
+            
+        }
+
+ 
+        #bg-visualizer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; 
+            pointer-events: none; 
+        }
+ 
+        .ui-container {
+            position: relative;
+            z-index: 10;
+            margin-top: auto;  
+            padding-bottom: 20px;
+            background: linear-gradient(to top, #1a252f 80%, transparent); /* Fade effect */
+            width: 100%;
+        }
+        
+        h1 {
+            margin-bottom: 5px;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            opacity: 0.8;
+        }
+
+        .controls {
+            margin: 10px 0;
+        }
+        
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .piano-container {
+            display: inline-block;
+            margin: 10px auto;
+            position: relative;
+        }
+        
+        .octave {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .octave-label {
+            font-size: 12px;
+            margin-bottom: 5px;
+            opacity: 0.5;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .white-keys {
+            display: flex;
+        }
+        
+        .key {
+            width: 50px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #333;
+            border-radius: 0 0 5px 5px;
+            margin: 0 1px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .key:hover {
+            background: #fff;
+            transform: translateY(1px);
+        }
+        
+        .key.active {
+            background: #3498db;
+            transform: translateY(2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .key .note {
+            font-size: 11px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .key .keyboard-key {
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+            margin-top: 5px;
+            background: #ecf0f1;
+            padding: 5px 12px;
+            border-radius: 3px;
+        }
+        
+        .black-keys {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+        }
+        
+        .black-key {
+            width: 35px;
+            height: 110px;
+            background: #333;
+            border: 1px solid #000;
+            border-radius: 0 0 3px 3px;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.1s;
+            z-index: 10;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        .black-key:hover {
+            background: #444;
+        }
+        
+        .black-key.active {
+            background: #e74c3c;
+            transform: translateY(2px);
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .black-key .note {
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .black-key .keyboard-key {
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+            margin-top: 5px;
+            background: #555;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+        
+        .instructions {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+        
+        .keyboard-layout {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-visualizer"></canvas>
+
+    <div class="ui-container">
+        <h1>Keyboard Piano</h1>
+        
+        <div class="controls">
+            <label for="waveform">Waveform: </label>
+            <select id="waveform">
+                <option value="sine">Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+        
+        <div class="piano-container">
+            <div class="octave">
+                <div class="white-keys">
+                    <div class="key" data-key="90"><div class="note">C4</div><div class="keyboard-key">Z</div></div>
+                    <div class="key" data-key="88"><div class="note">D4</div><div class="keyboard-key">X</div></div>
+                    <div class="key" data-key="67"><div class="note">E4</div><div class="keyboard-key">C</div></div>
+                    <div class="key" data-key="86"><div class="note">F4</div><div class="keyboard-key">V</div></div>
+                    <div class="key" data-key="66"><div class="note">G4</div><div class="keyboard-key">B</div></div>
+                    <div class="key" data-key="78"><div class="note">A4</div><div class="keyboard-key">N</div></div>
+                    <div class="key" data-key="77"><div class="note">B4</div><div class="keyboard-key">M</div></div>
+                </div>
+                
+                <div class="black-keys">
+                    <div class="black-key" data-key="83" style="left: 35px;"><div class="note">C#4</div><div class="keyboard-key">S</div></div>
+                    <div class="black-key" data-key="68" style="left: 88px;"><div class="note">D#4</div><div class="keyboard-key">D</div></div>
+                    <div class="black-key" data-key="71" style="left: 194px;"><div class="note">F#4</div><div class="keyboard-key">G</div></div>
+                    <div class="black-key" data-key="72" style="left: 247px;"><div class="note">G#4</div><div class="keyboard-key">H</div></div>
+                    <div class="black-key" data-key="74" style="left: 300px;"><div class="note">A#4</div><div class="keyboard-key">J</div></div>
+                </div>
+            </div>
+            
+            <div class="octave">
+                <div class="white-keys">
+                    <div class="key" data-key="81"><div class="note">C5</div><div class="keyboard-key">Q</div></div>
+                    <div class="key" data-key="87"><div class="note">D5</div><div class="keyboard-key">W</div></div>
+                    <div class="key" data-key="69"><div class="note">E5</div><div class="keyboard-key">E</div></div>
+                    <div class="key" data-key="82"><div class="note">F5</div><div class="keyboard-key">R</div></div>
+                    <div class="key" data-key="84"><div class="note">G5</div><div class="keyboard-key">T</div></div>
+                    <div class="key" data-key="89"><div class="note">A5</div><div class="keyboard-key">Y</div></div>
+                    <div class="key" data-key="85"><div class="note">B5</div><div class="keyboard-key">U</div></div>
+                    <div class="key" data-key="73"><div class="note">C6</div><div class="keyboard-key">I</div></div>
+                    <div class="key" data-key="79"><div class="note">D6</div><div class="keyboard-key">O</div></div>
+                </div>
+                
+                <div class="black-keys">
+                    <div class="black-key" data-key="50" style="left: 35px;"><div class="note">C#5</div><div class="keyboard-key">2</div></div>
+                    <div class="black-key" data-key="51" style="left: 88px;"><div class="note">D#5</div><div class="keyboard-key">3</div></div>
+                    <div class="black-key" data-key="53" style="left: 194px;"><div class="note">F#5</div><div class="keyboard-key">5</div></div>
+                    <div class="black-key" data-key="54" style="left: 247px;"><div class="note">G#5</div><div class="keyboard-key">6</div></div>
+                    <div class="black-key" data-key="55" style="left: 300px;"><div class="note">A#5</div><div class="keyboard-key">7</div></div>
+                    <div class="black-key" data-key="57" style="left: 406px;"><div class="note">C#6</div><div class="keyboard-key">9</div></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <div class="keyboard-layout">
+                Press keys to play!s
+            </div>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
